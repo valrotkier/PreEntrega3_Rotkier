@@ -4,17 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piedra, Papel o Tijera</title>
+    <title>Pre-Entrega3 - Piedra Papel o Tijera</title>
+    <link rel="stylesheet" href="./css/estilos.css">
 </head>
 
 <body>
-    <p>Piedra, Papel o Tijera</p>
-    <button>Piedra</button>
-    <button>Papel</button>
-    <button>Tijera</button>
+    <p class="titulo">Piedra, Papel o Tijera</p>
 
-    <button class="js-boton-resetear">Resetear</button>
-    <script src="./app.js" async></script>
+    <button class="js-piedra-btn mov-boton"><img src="./img/piedra-emoji.png" class="mov-icon"></button>
+
+
+    <button class="js-papel-btn mov-boton"><img src="./img/papel-emoji.png" class="mov-icon"></button>
+
+
+    <button class="js-tijera-btn mov-boton"><img src="./img/tijera-emoji.png" class="mov-icon"></button>
+
+    <p class="js-resultado resultado"></p>
+    <p class="js-movimientos movimientos"></p>
+    <p class="js-puntaje puntaje"></p>
+
+    <button id="Resetear" class="reset-puntaje-boton">Resetear</button>
+
+    <button id="MostrarEstadisticas" class="mostrar-estadisticas-boton">Mostrar Estadísticas</button>
+
+    <p class="js-estadisticas"></p>
+
+
+    <script src="./js/app.js"></script>
 </body>
 
 </html>
