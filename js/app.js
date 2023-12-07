@@ -1,82 +1,48 @@
-function actualizaPuntajeElemento() {
-  document.querySelector(
-    ".js-puntaje"
-  ).innerHTML = `Ganadas: ${puntaje.ganadas}, Perdidas: ${puntaje.perdidas}, Empates: ${puntaje.empates}`;
-}
-// Creamos un objeto para almacenar el puntaje y lo guardamos en una variable
-//Guardamos con localStorage
+// Variables globales
+const opciones = ["piedra", "papel", "tijera"];
 let puntaje = JSON.parse(localStorage.getItem("puntaje")) || {
   ganadas: 0,
   perdidas: 0,
   empates: 0,
 };
-/* Este codigo es lo mismo que arriba dsp del ||
-if (!puntaje) {
-    puntaje = {
-        ganadas: 0,
-        perdidas: 0,
-        empates: 0,
-    }*/
-actualizaPuntajeElemento();
-
 // Creamos un array para almacenar el historial de movimientos
 const historialMovimientosUsuario = [];
 const historialMovimientosComputadora = [];
 
+// Actualiza el elemento HTML que muestra el puntaje
+function actualizaPuntajeElemento() {
+  document.querySelector(
+    ".js-puntaje"
+  ).innerHTML = `Ganadas: ${puntaje.ganadas}, Perdidas: ${puntaje.perdidas}, Empates: ${puntaje.empates}`;
+}
+
+// Función para que la computadora elija un movimiento aleatorio
 function eligeMovimientoComputadora() {
-  const randomNumber = Math.random();
-  let eleccionComputadora = "";
-
-  // Acá se genera una elección al azar para la computadora
-  if (randomNumber >= 0 && randomNumber < 1 / 3) {
-    eleccionComputadora = "piedra";
-  } else if (randomNumber >= 1 / 3 && randomNumber < 2 / 3) {
-    eleccionComputadora = "papel";
-  } else if (randomNumber >= 2 / 3 && randomNumber < 1) {
-    eleccionComputadora = "tijera";
-  }
-
+  const eleccionComputadora =
+    opciones[Math.floor(Math.random() * opciones.length)];
   //Se agrega, mediante la funcion push(), la eleccion de la computadora como un nuevo objeto al array creado historialMovimientos.
   historialMovimientosComputadora.push({
     jugador: "Computadora",
     eleccion: eleccionComputadora,
   });
-
   // Return para que el resultado pueda ser usado fuera del scope del condicional de la eleccionComputadora
   return eleccionComputadora;
 }
 
 function jugarJuego(eleccionUsuario) {
   const eleccionComputadora = eligeMovimientoComputadora();
-
+  const relaciones = { piedra: "tijera", papel: "piedra", tijera: "papel" };
+  // Esto determina el resultado de la ronda
   let resultado = "";
-  if (eleccionUsuario === "tijera") {
-    if (eleccionComputadora === "piedra") {
-      resultado = "PERDISTE";
-    } else if (eleccionComputadora === "papel") {
-      resultado = "GANASTE";
-    } else if (eleccionComputadora === "tijera") {
-      resultado = "EMPATE";
-    }
-  } else if (eleccionUsuario === "papel") {
-    if (eleccionComputadora === "piedra") {
-      resultado = "GANASTE";
-    } else if (eleccionComputadora === "papel") {
-      resultado = "EMPATE";
-    } else if (eleccionComputadora === "tijera") {
-      resultado = "PERDISTE";
-    }
-  } else if (eleccionUsuario === "piedra") {
-    if (eleccionComputadora === "piedra") {
-      resultado = "EMPATE";
-    } else if (eleccionComputadora === "papel") {
-      resultado = "PERDISTE";
-    } else if (eleccionComputadora === "tijera") {
-      resultado = "GANASTE";
-    }
+  if (eleccionUsuario === eleccionComputadora) {
+    resultado = "EMPATE";
+  } else if (relaciones[eleccionUsuario] === eleccionComputadora) {
+    resultado = "GANASTE";
+  } else {
+    resultado = "PERDISTE";
   }
 
-  //Esto es para actualizar el puntaje
+  // Actualiza el puntaje y muestra el resultado
   if (resultado === "GANASTE") {
     puntaje.ganadas += 1;
   } else if (resultado === "PERDISTE") {
@@ -84,8 +50,8 @@ function jugarJuego(eleccionUsuario) {
   } else {
     puntaje.empates += 1;
   }
-  localStorage.setItem("puntaje", JSON.stringify(puntaje));
 
+  localStorage.setItem("puntaje", JSON.stringify(puntaje));
   actualizaPuntajeElemento();
 
   // Se agrega la elección del usuario al historial de movimientos
@@ -96,70 +62,26 @@ function jugarJuego(eleccionUsuario) {
   };
   historialMovimientosUsuario.push(movimientoUsuario);
 
-  //Se muestra el resultado en el parrafo
   document.querySelector(".js-resultado").innerHTML = resultado;
-
   document.querySelector(".js-movimientos").innerHTML = `Vos
-<img src="./img/${eleccionUsuario.toLowerCase()}-emoji.png" class="mov-icon">
-<img src="./img/${eleccionComputadora.toLowerCase()}-emoji.png" class="mov-icon">
-Computadora`;
+         <img src="./img/${eleccionUsuario.toLowerCase()}-emoji.png" class="mov-icon">
+         <img src="./img/${eleccionComputadora.toLowerCase()}-emoji.png" class="mov-icon">
+         Computadora`;
 
-  `Elegiste ${eleccionUsuario} - Computadora eligio ${eleccionComputadora}.`;
-}
-
-//////////////////
-
-// Aca aplicamos metodo de filtrado sobre arrays con .filter
-// Utilizamos .filter para crear un nuevo array que contiene solo los movimientos.
-// Luego aplicamos .length para obtener la cantidad de elementos en cada uno de estos nuevos arrays filtrados, lo que representa el número de ganadas, perdidas y empates del usuario en el juego.
-
-const ganadasUsuario = historialMovimientosUsuario.filter(
-  (movimiento) => movimiento.resultado === "GANASTE"
-).length;
-
-const perdidasUsuario = historialMovimientosUsuario.filter(
-  (movimiento) => movimiento.resultado === "PERDISTE"
-).length;
-
-const empatesUsuario = historialMovimientosUsuario.filter(
-  (movimiento) => movimiento.resultado === "EMPATE"
-).length;
-
-function resetear() {
-  puntaje.ganadas = 0;
-  puntaje.perdidas = 0;
-  puntaje.empates = 0;
-  actualizaPuntajeElemento();
-
-  // Resetear historial de movimientos
-  historialMovimientosUsuario.length = 0;
-  historialMovimientosComputadora.length = 0;
-
-  // Mostrar las estadísticas después del reseteo
   mostrarEstadisticas();
 }
-//event listeners
-let piedraBtn = document.querySelector(".js-piedra-btn");
-let papelBtn = document.querySelector(".js-papel-btn");
-let tijeraBtn = document.querySelector(".js-tijera-btn");
-let resetearBtn = document.getElementById("Resetear");
 
-piedraBtn.addEventListener("click", function () {
-  jugarJuego("piedra");
-});
+// Reinicia el juego y muestra las estadisticas
+function resetear() {
+  puntaje = { ganadas: 0, perdidas: 0, empates: 0 };
+  actualizaPuntajeElemento();
+  historialMovimientosUsuario.length = 0;
+  historialMovimientosComputadora.length = 0;
+  mostrarEstadisticas();
+}
 
-papelBtn.addEventListener("click", function () {
-  jugarJuego("papel");
-});
-
-tijeraBtn.addEventListener("click", function () {
-  jugarJuego("tijera");
-});
-
-resetearBtn.addEventListener("click", resetear);
-
-//////////
-
+// Función para calcular estadisticas con método de orden superior sobre arrays
+//Se utiliza ilter para crear subconjuntos de elementos del array historialMovimientos basados en condiciones específicas.
 function calcularEstadisticas(historialMovimientos) {
   const totalMovimientos = historialMovimientos.length;
   const ganadas = historialMovimientos.filter(
@@ -187,29 +109,33 @@ function calcularEstadisticas(historialMovimientos) {
   };
 }
 
-// Llamada a la función con el historial del usuario
-const estadisticasUsuario = calcularEstadisticas(historialMovimientosUsuario);
-
-// Función para mostrar las estadísticas
+// Función para mostrar las estadisticas
 function mostrarEstadisticas() {
-  const estadisticasUsuario = calcularEstadisticas(historialMovimientosUsuario);
-  const estadisticasTexto = `
-    Total de movimientos: ${estadisticasUsuario.totalMovimientos}
-    Ganadas: ${estadisticasUsuario.ganadas}
-    Perdidas: ${estadisticasUsuario.perdidas}
-    Empates: ${estadisticasUsuario.empates}
-    Porcentaje de victorias: ${estadisticasUsuario.porcentajeGanadas.toFixed(
-      0
-    )}%
-    Porcentaje de derrotas: ${estadisticasUsuario.porcentajePerdidas.toFixed(
-      0
-    )}%
-    Porcentaje de empates: ${estadisticasUsuario.porcentajeEmpates.toFixed(0)}%
-  `;
+  const estadisticas = calcularEstadisticas(historialMovimientosUsuario);
 
-  document.querySelector(".js-estadisticas").innerHTML = `${estadisticasTexto}`;
+  const estadisticasTexto = `
+         Total de movimientos: ${estadisticas.totalMovimientos}<br>
+         Porcentaje de victorias: ${estadisticas.porcentajeGanadas.toFixed(
+           0
+         )}%<br>
+         Porcentaje de derrotas: ${estadisticas.porcentajePerdidas.toFixed(
+           0
+         )}%<br>
+         Porcentaje de empates: ${estadisticas.porcentajeEmpates.toFixed(0)}%
+     `;
+
+  document.querySelector(".js-estadisticas").innerHTML = estadisticasTexto;
 }
 
-// Event listener para el botón de mostrar estadísticas
-const mostrarEstadisticasBtn = document.getElementById("MostrarEstadisticas");
-mostrarEstadisticasBtn.addEventListener("click", mostrarEstadisticas);
+// Event listeners para los botones
+let piedraBtn = document.querySelector(".js-piedra-btn");
+let papelBtn = document.querySelector(".js-papel-btn");
+let tijeraBtn = document.querySelector(".js-tijera-btn");
+let resetearBtn = document.getElementById("Resetear");
+
+piedraBtn.addEventListener("click", () => jugarJuego("piedra"));
+papelBtn.addEventListener("click", () => jugarJuego("papel"));
+tijeraBtn.addEventListener("click", () => jugarJuego("tijera"));
+resetearBtn.addEventListener("click", resetear);
+
+actualizaPuntajeElemento();
