@@ -74,6 +74,7 @@ function jugarJuego(eleccionUsuario) {
 // Reinicia el juego y muestra las estadisticas
 function resetear() {
   puntaje = { ganadas: 0, perdidas: 0, empates: 0 };
+  localStorage.setItem("puntaje", JSON.stringify(puntaje));
   actualizaPuntajeElemento();
   historialMovimientosUsuario.length = 0;
   historialMovimientosComputadora.length = 0;
