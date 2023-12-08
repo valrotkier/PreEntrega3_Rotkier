@@ -1,4 +1,3 @@
-// Variables globales
 const opciones = ["piedra", "papel", "tijera"];
 let puntaje = JSON.parse(localStorage.getItem("puntaje")) || {
   ganadas: 0,
@@ -29,6 +28,25 @@ function eligeMovimientoComputadora() {
   return eleccionComputadora;
 }
 
+// Función para mostrar las estadisticas
+function mostrarEstadisticas() {
+  const estadisticas = calcularEstadisticas(historialMovimientosUsuario);
+
+  const estadisticasTexto = `
+         Total de movimientos: ${estadisticas.totalMovimientos}<br>
+         Porcentaje de victorias: ${estadisticas.porcentajeGanadas.toFixed(
+           0
+         )}%<br>
+         Porcentaje de derrotas: ${estadisticas.porcentajePerdidas.toFixed(
+           0
+         )}%<br>
+         Porcentaje de empates: ${estadisticas.porcentajeEmpates.toFixed(0)}%
+     `;
+
+  document.querySelector(".js-estadisticas").innerHTML = estadisticasTexto;
+}
+
+// Función para jugar al juego
 function jugarJuego(eleccionUsuario) {
   const eleccionComputadora = eligeMovimientoComputadora();
   const relaciones = { piedra: "tijera", papel: "piedra", tijera: "papel" };
@@ -82,7 +100,7 @@ function resetear() {
 }
 
 // Función para calcular estadisticas con método de orden superior sobre arrays
-//Se utiliza ilter para crear subconjuntos de elementos del array historialMovimientos basados en condiciones específicas.
+//Se utiliza filter para crear subconjuntos de elementos del array historialMovimientos basados en condiciones específicas.
 function calcularEstadisticas(historialMovimientos) {
   const totalMovimientos = historialMovimientos.length;
   const ganadas = historialMovimientos.filter(
@@ -108,24 +126,6 @@ function calcularEstadisticas(historialMovimientos) {
     porcentajePerdidas,
     porcentajeEmpates,
   };
-}
-
-// Función para mostrar las estadisticas
-function mostrarEstadisticas() {
-  const estadisticas = calcularEstadisticas(historialMovimientosUsuario);
-
-  const estadisticasTexto = `
-         Total de movimientos: ${estadisticas.totalMovimientos}<br>
-         Porcentaje de victorias: ${estadisticas.porcentajeGanadas.toFixed(
-           0
-         )}%<br>
-         Porcentaje de derrotas: ${estadisticas.porcentajePerdidas.toFixed(
-           0
-         )}%<br>
-         Porcentaje de empates: ${estadisticas.porcentajeEmpates.toFixed(0)}%
-     `;
-
-  document.querySelector(".js-estadisticas").innerHTML = estadisticasTexto;
 }
 
 // Event listeners para los botones
